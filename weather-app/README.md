@@ -3,6 +3,8 @@
 這是一個用 React 實作的簡易天氣查詢小程式。
 主要練習 React Hook、API 串接和狀態管理。
 
+## [查看網站]([https://hane96website.vercel.app/](https://weather-app-rho-murex-12.vercel.app/))
+
 ---
 
 ## 功能
