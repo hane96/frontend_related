@@ -876,4 +876,74 @@ function reducer(state, action) {
 
 
 
+---
+
+
+# Custom Hook
+
+Custom Hook 通常是將「可重複使用的邏輯」從 component 中抽離出來的工具。
+
+- 名稱必須以 `use` 開頭，這是為了讓 React 可以辨識它是 hook。
+- 和一般函式一樣，可以自訂輸入參數與回傳內容。
+- 裡面可以使用其他 hook（例如：`useState`, `useEffect`）。
+
+---
+
+## 適合使用 Custom Hook 的情況：
+
+1. 重複邏輯需要在不同 component 中使用（例如 API request、scroll 等）。
+2. component 過於複雜，將邏輯抽離讓 component 更簡潔。
+3. 將功能封裝後，更方便測試與維護。
+
+---
+
+##  模板範例
+
+```js
+function useXXX(param) {
+  const [state, setState] = useState(initialValue);
+
+  useEffect(() => {
+    // 執行有副作用的邏輯，例如 API request
+  }, [dependency array]);
+
+  return state; // 或其他需要回傳的資料
+}
+````
+
+
+
+###  ex: useToggle.js
+
+```js
+import { useState } from "react";
+
+function useToggle(initialValue = false) {
+  const [value, setValue] = useState(initialValue);
+  const toggle = () => setValue(v => !v);
+  return [value, toggle];
+}
+```
+
+使用方式就像使用一般 hook 一樣：
+
+```js
+const [on, toggle] = useToggle();
+```
+
+---
+
+### 常見 Custom Hook 中會用到的 Hook
+
+| 類型    | Hook                             |
+| ----- | ----------------------------------- |
+| 資料處理  | `useFetchData`, `useWeather`        |
+| UI 狀態 | `useToggle`, `useModal`, `useTheme` |
+| 事件處理  | `useScroll`, `useKeyPress`          |
+| 表單    | `useInput`, `useForm`               |
+
+
+---
+
+
 
