@@ -27,14 +27,25 @@ function AdminHome() {
     else {
       setError("");
       setMessages(newMessages);
+      const stringify_message = JSON.stringify(newMessages);
+      localStorage.setItem("messages", stringify_message);
       setDeleteId("");
     }
   };
 
   useEffect(() => {
-    fetchMessages().then((data) => {
-      setMessages(data);
-    });
+    const stored_messages = localStorage.getItem("messages");
+    if(!stored_messages) {
+      fetchMessages().then((data) => {
+        setMessages(data);
+        localStorage.setItem("messages", JSON.stringify(data));
+      });
+    }
+    else{
+      const parsed = JSON.parse(stored_messages);
+      setMessages(parsed);
+    }
+
   }, []);
 
   return (

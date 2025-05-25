@@ -10,11 +10,17 @@ export function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
-    fetchMessages().then((data) => {
-      setMessages(data);
-      localStorage.setItem("messages", JSON.stringify(data));
-    }); 
+    const stored_messages = localStorage.getItem("messages");
+    if(!stored_messages){
+      fetchMessages().then((data) => {
+        setMessages(data);
+        localStorage.setItem("messages", JSON.stringify(data));
+      }); 
+    }
+    else{
+      const parsed = JSON.parse(stored_messages)
+      setMessages(parsed);
+    }
   }, []);
 
   const handleClick = (e) => {
@@ -48,7 +54,7 @@ export function Home() {
       )}
 
       <div className="mt-6">
-        {token === "userToken" && <MessageForm setMessages={setMessages} />}
+        {token === "userToken" && <MessageForm messages={messages} setMessages={setMessages} />}
 
         {(token == null || token == "adminToken") && (
           <div className="mt-4 text-center">
@@ -66,9 +72,9 @@ export function Home() {
   );
 }
 
-function MessageForm({ setMessages }) {
+function MessageForm({ messages, setMessages }) {
   const [newMessage, setNewMessage] = useState("");
-  const { token, logout } = useAuth();
+  const {logout } = useAuth();
   const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
@@ -84,7 +90,10 @@ function MessageForm({ setMessages }) {
       created_at: new Date().toLocaleString(),
     };
 
-    setMessages((prev) => [...prev, newMsg]);
+    const updatedMessages = [...messages, newMsg];
+    setMessages(updatedMessages);
+    const stringify_messages = JSON.stringify(updatedMessages);
+    localStorage.setItem("messages", stringify_messages);
     setNewMessage("");
     }
 
