@@ -1,0 +1,78 @@
+
+
+body{
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+.todo-card{
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 12px; /*圓角 讓角落更柔和*/
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1); /*增加陰影效果*/
+    margin: auto;
+}
+
+h1{
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin: 20px;
+}
+
+#input{
+    display: flex; /*輸入框和button水平排列*/
+    gap: 10px; /*輸入框和按鈕之間的間距*/
+    margin: 20px;
+}
+
+#todo-input{
+    flex-grow: 1; /*填滿剩餘空間*/
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 0px 1px #ccc 
+}
+
+#add-btn{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.2s; /*滑鼠移入時的效果*/
+    padding: 0px 16px;
+}
+
+#todolist{
+    list-style: none;
+    margin: 20px 0px;
+    background-color: #f9f9f9;
+    padding: 0px 16px;
+    border-radius: 8px;
+}
+
+.delete-btn{
+    background-color: #dc3545;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    transition: background-color 0.2s;
+    text-align: right;
+    margin-left: 10px;
+    float: right;
+}
+
+#delete-btn:hover{
+    background-color: #c82333;
+}
+
+
+.done{
+    text-decoration: line-through;
+}
+
