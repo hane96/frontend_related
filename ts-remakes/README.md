@@ -20,4 +20,4 @@
 
 如果有興趣了解更多可以看看我的學習筆記: 
 
-[ TypeScript 學習筆記](./note/typescript_note.md)
+[ TypeScript 學習筆記](../note/typescript_note.md)
