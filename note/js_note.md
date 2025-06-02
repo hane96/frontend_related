@@ -599,3 +599,328 @@ console.log("Debugging...");
      * 例如：`1 === "1"` 會返回 `false`。
 
 ---
+
+
+
+
+
+## ES6+
+
+### `let` / `const`
+
+`let` 區塊作用變數，和`var`的差別在於 `var`在同一個作用域內可以重複宣告，`let`除了不能重複宣告以外也不能提前存值。
+
+ex:
+```js
+console.log(foo); // undefined
+var foo = 123;
+
+console.log(bar); // ReferenceError
+let bar = 456;
+
+```
+
+原則上會只用`let`+`const`是更好的，
+不用`var`會更安全、更容易維護。
+
+
+### arrow function (箭頭函數)
+
+語法部分基本上就是 `參數 => 函數內容`
+
+參數部分:
+- 沒有參數要寫 `()`
+- 單一個參數不用括號 `param`
+- 多個參數要用括號包起來 `(param1, param2, ...)`
+
+函數內容的部分:
+- 在同一行寫可以不加 `{}`
+- 如果要用 `{}` 要自己寫return
+
+#### arrow function沒有自己的`this`
+箭頭函數會繼承外層的this
+
+ex:
+```js
+function Person() {
+  this.age = 0;
+
+  setInterval(() => {
+    this.age++;
+    console.log(this.age);
+  }, 1000);
+}
+```
+這裡的`this`會指向 Person 的`this`。
+
+如果是使用`function()`去寫，`this`就會指向`setInterval`或
+`window`而不是`Person`
+
+
+#### 回傳物件要用`()`包起來
+
+ex:
+```js
+const getUser = () => ({ name: "Alice", age: 25 });
+```
+如果沒有加外面的`()`，會被當作是把 callback function 包起來的`{}`而不是物件的`{}`。 JS 就會以為沒有回傳值變`undefine`
+
+
+
+### Destructuring (解構賦值)
+
+分為`array`和`object`的解構賦值
+
+#### array
+
+* 陣列的解構賦值由順序決定，名字不重要
+```js
+const arr = [10, 20, 30];
+const [a, b] = arr;
+console.log(a); // 10
+console.log(b); // 20
+
+```
+由順序來對應陣列的位置
+
+* 如果想跳過某些元素還是要照順序，直接不要寫變數名稱就好。
+
+```js
+const [first, , third] = [1, 2, 3];
+console.log(third); // 3
+
+```
+
+#### object 
+
+* 物件的解構賦值由名字決定，順序不重要
+```js
+const user = { name: "Alice", age: 25 };
+const { age, name } = user;
+console.log(name); // "Alice"
+```
+解構賦值內的名稱要和物件的 key 一樣，順序沒差只有名稱相同就好
+
+
+#### 在 React 中最常用來傳遞 props
+
+```js
+const MyComponent = ({ title, onClick }) => {
+  return <button onClick={onClick}>{title}</button>;
+};
+```
+用解構賦值取得父 component 傳來的 props
+
+
+#### 可以寫預設值
+
+在定義物件或陣列時可以寫預設值
+
+```js
+const [a = 1, b = 2] = [];
+console.log(a, b); // 1, 2
+
+const { name = "Guest" } = {};
+console.log(name); // "Guest"
+```
+在沒有定義 a, b 的情況下解構出來的會是預設值
+
+
+
+### Spread Operator (展開運算子)
+
+用來展開陣列或物件內容
+
+語法是`...變數名稱`
+
+#### 陣列
+```js
+const arr1 = [1, 2];
+const arr2 = [...arr1, 3, 4];
+console.log(arr2); // [1, 2, 3, 4]
+```
+`...arr1`等同於[1, 2]，可以像這樣續接陣列
+
+#### 物件
+```js
+const user = { name: "Alice" };
+const updatedUser = { ...user, age: 25 };
+console.log(updatedUser); // { name: "Alice", age: 25 }
+```
+`...user`等同於`{name:"Alice"}`，可以像陣列那樣續接
+
+另一個常見的用法是去更新物件
+```js
+const obj1 = { a: 1, b: 2 };
+const obj2 = { ...obj1, b: 99 };
+console.log(obj2); // { a: 1, b: 99 }
+```
+可以看成是複製了 obj1 以後再把 b 的值覆蓋 (後面的會蓋掉前面的)
+
+
+### Rest operator (剩餘運算子)
+
+
+語法和 spread operator 相同 都是 `...變數名稱`
+
+用來收集剩下的陣列或物件元素
+
+```js
+const [first, ...rest] = [1, 2, 3, 4];
+console.log(first); // 1
+console.log(rest);  // [2, 3, 4]
+```
+`...rest`就代表除了 first 以外剩下的東西
+
+```js
+const { a, ...others } = { a: 1, b: 2, c: 3 };
+console.log(a);      // 1
+console.log(others); // { b: 2, c: 3 }
+```
+
+- React 中拆 props 有時候會用到
+```jsx
+const { title, ...rest } = props
+```
+
+
+### Template Literals (樣板字串)
+
+
+使用反引號 ` (tab上面那個) 將字串包起來變成樣板字串
+
+字串中可以用${}包住要插入的變數或運算式
+
+```js
+const name = "Hane";
+const a=5, b=10
+const message = `Hello, ${name}! ${a+b}`;
+console.log(message); // Hello, Hane! 15
+```
+
+也可以放函式呼叫、條件運算等
+
+```js
+const age = 20;
+console.log(`you are${age >= 18 ? 'adult' : 'kid'}`);
+```
+
+
+### Promise / asnyc-await
+
+`Promise` 是一種表示非同步操作結果的物件
+
+有三種狀態
+
+- pending: 初始狀態，還在進行中
+- fulfilled: 成功完成，會進入`.then()`
+- rejected: 失敗，進入`.catch()`
+
+```js
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("成功結果");
+    // 或 reject("失敗原因");
+  }, 1000);
+});
+
+promise
+  .then(result => console.log(result)) // 成功
+  .catch(error => console.error(error)); // 失敗
+
+```
+
+#### async / await
+
+是一種簡化 promise 的使用方式
+
+```js
+async function getData() {
+  const result = await fetch("https://api.example.com/data");
+  const json = await result.json();
+  console.log(json);
+}
+```
+- function 前面加 `async` 讓裡面的程式可以用 `await`
+- `await`的右邊必須是 promise 或會變成 promise 的東西
+- `await`會暫停函式的執行，等 Promise resolve 以後才會繼續往下執行
+
+`await`可以想成是用來確保 resolve 完才繼續往下做，如果沒加後面用到他的東西可能還沒 resolve 完導致錯誤。
+
+
+* 通常用來做 fetch API 這種會花時間的東西
+```js
+async function loadData() {
+  try {
+    const res = await fetch("https://api.example.com/data");
+    const data = await res.json();
+    console.log(data);
+  } catch (err) {
+    console.error("發生錯誤", err);
+  }
+}
+```
+
+
+### import / export
+
+export 分為兩種 `export`和`export default`
+
+- 一個檔案中只有一個要 export 的東西時可以用`export default`
+
+要 import 他只需要使用 `import` 不用加`{}`指定東西
+
+- 一個檔案中有多個東西要export 就需要對每個東西分開`export`不能加`default`
+
+要 import 時就必須用`{}`包住要import的東西，不能直接`import`整個檔案
+
+在 React 中常用來 import / export Component
+
+
+
+### Optional Chaining (`?.`) / Nullish Coalescing (`??`)
+
+這兩個是為了讓讀取值時更安全
+
+
+#### Optional Chaining (`?.`)
+
+更安全的存取巢狀物件或函式
+
+```js
+const user = {
+  name: "Alice",
+  address: {
+    city: "Taipei"
+  }
+};
+
+console.log(user.address.city);  // "Taipei"
+console.log(user.profile?.age);  // undefined，不會報錯
+console.log(user.getInfo?.());   // undefined，不會報錯
+```
+在`?.`前面的東西是`null`或`undefined`就直接回傳`undefined`，不會繼續往後執行，也不會報錯。
+
+像這裡的`.age` `.()`都不會被執行到?
+
+
+#### Nullish Coalescing (`??`)
+
+用來在值為`null`或`undefined`時提供預設值
+
+```js
+const username = null;
+const display = username ?? "Guest";
+console.log(display); // "Guest"
+```
+表示沒有 username 時會用`"Guest"`當預設值
+
+這和`||`的不同在`||`會把任何的falsy值都當作空值(ex: 0, false等)
+
+`??`只會處理`null`和`undefined`
+
+
+
+
+
+
