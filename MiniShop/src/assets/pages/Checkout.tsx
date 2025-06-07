@@ -69,6 +69,7 @@ function Checkout() {
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
         const formError = validForm();
+        console.log(formError);
     }
 
     return(
