@@ -68,6 +68,9 @@ function Login() {
                 >返回商品頁</button>
           </div>
 
+          <p className="text-gray-500 mt-2">測試用帳號: user</p>
+          <p className="text-gray-500">測試用密碼: user123</p>
+
         </div>
     )
 }
