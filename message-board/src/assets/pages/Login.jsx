@@ -59,6 +59,10 @@ function Login() {
 
           {error && <p className="text-red-500 text-center">{error}</p>}
         </form>
+        <p className="text-gray-500 mt-2">測試用帳號(user權限): user</p>
+        <p className="text-gray-500">測試用密碼(user權限): user123</p>
+        <p className="text-gray-500 mt-2">測試用帳號(admin權限): admin</p>
+        <p className="text-gray-500">測試用密碼(admin權限): admin123</p>
       </div>
     </div>
   );
