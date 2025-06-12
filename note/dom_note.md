@@ -667,3 +667,66 @@ form.addEventListener("submit", function(e) {
 * 事件與表單常搭配使用在登入/註冊/搜尋等功能
 
 ---
+
+
+
+
+## 補充 (event propagation)
+
+
+可以看一下巢狀元素
+
+```html
+<body>
+  <div id="outer">
+    <button id="inner">Click me</button>
+  </div>
+</body>
+```
+假設今天在`outer`和`inner`都綁了 event listener 
+
+當點擊 button 時`outer`和`inner`的觸發順序是什麼? 怎麼決定?
+
+這時候就需要靠 event propagation 的機制來決定
+
+### Event Propagation
+
+event 的傳遞有三個階段 依序是:
+
+1. Capturing phase (捕獲階段): 從最外層往內傳(從`<html>`->`<body>`->`子層`)
+
+2. Target phase (目標階段): event發生在目標元素上面
+
+3. Bubbling phase (冒泡階段): 從內往外傳(從`<button>`->`<body>`->`<html>`)
+
+event 會依序經歷這三個 phase，每個 phase 會不會觸發 listener 取決於有沒有綁對應 phase 的 listener。
+
+我們可以控制的是 listener 會在哪一個階段被觸發。
+
+### listener
+```js
+element.addEventListener('click', handler, true)
+```
+
+可以看到相較於之前的寫法我們多用了第三個參數，這個 boolean 值會決定我們要讓 listener 在第一階段(`Capturing phase`) 還是第三階段(`Bubbling phase`)觸發。
+
+`true`對應到`Capturing phase`，而`false`對應到`Bubbling phase`。
+
+如果沒寫也就是預設情況下會是`false`，也意味著平常會是`Bubbling`，由內傳到外
+
+### e.stopPropagation()
+
+我們可以在 event 的 handler function 裡面加上`e.stopPropagation()`，可以阻止繼續往外或往內冒泡。
+
+```js
+document.getElementById("inner").addEventListener("click", (e) => {
+  e.stopPropagation();  // 阻止往外冒泡
+  console.log("button clicked");
+});
+```
+
+
+---
+
+
+
