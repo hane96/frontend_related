@@ -17,12 +17,12 @@ function Checkout() {
       }
     }
 
-    const [username, setUsername] = useState<string>("");
-    const [phone, setPhone] = useState<string>("");
-    const [address, setAddress] = useState<string>("");
-    const [nameError, setNameError] = useState<string>("");
-    const [phoneError, setPhoneError] = useState<string>("");
-    const [addressError, setAddressError] = useState<string>("");
+    const [username, setUsername] = useState("");
+    const [phone, setPhone] = useState("");
+    const [address, setAddress] = useState("");
+    const [nameError, setNameError] = useState("");
+    const [phoneError, setPhoneError] = useState("");
+    const [addressError, setAddressError] = useState("");
     const [error, setError] = useState<boolean | null>(null);
 
     const validForm = (): boolean => {
