@@ -5,7 +5,7 @@ function Home() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(localStorage.getItem("login") === "true");
   const username = localStorage.getItem("username") || "";
-  const [showModal, setShowModal] = useState(false);
+  
 
   const toProducts = () => {
     navigate("/product");
