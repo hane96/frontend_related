@@ -62,7 +62,7 @@ function Login() {
           />
           <button
             type="submit"
-            className="px-3 py-2 rounded mx-auto shadow transition duration-200"
+            className="px-3 py-2 rounded mx-auto shadow transition duration-200 cursor-pointer"
             style={{ backgroundColor: "#FF8360", color: "white" }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#E66F55")}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FF8360")}
@@ -81,7 +81,7 @@ function Login() {
       <div className="flex flex-row gap-2 mt-4">
         <button
           onClick={() => navigate("/")}
-          className="p-2 rounded shadow transition duration-200"
+          className="p-2 rounded shadow transition duration-200 cursor-pointer"
           style={{
             border: "1px solid #FFCCBC",
             backgroundColor: "#FFCCBC",
@@ -100,7 +100,7 @@ function Login() {
         </button>
         <button
           onClick={() => navigate("/product")}
-          className="p-2 rounded shadow transition duration-200"
+          className="p-2 rounded shadow transition duration-200 cursor-pointer"
           style={{
             border: "1px solid #FFCCBC",
             backgroundColor: "#FFCCBC",
