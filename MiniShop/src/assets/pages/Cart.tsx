@@ -41,8 +41,8 @@ function Cart() {
     }
 
     return (
-        <div className="mx-auto p-4 h-screen" style={{backgroundColor: "#FFF7F0", color: "#5A3E36"}}>
-          <h1 className="text-2xl font-bold mb-4 my-4" style={{color: "#FF8360"}}>購物車</h1>
+        <div className="bg-[#FFF7F0] text-[#5A3E36] mx-auto p-4 h-screen">
+          <h1 className="text-[#FF8360] text-2xl font-bold mb-4 my-4">購物車</h1>
            {
             cart.length === 0 
             ? (<p>購物車是空的</p>)
@@ -52,23 +52,18 @@ function Cart() {
                 return (
                 <div 
                   key={item.productId} 
-                  className="flex flex-col bg-white md:flex-row gap-2 md:gap-0 border py-4 my-4 justify-around items-center shadow rounded-lg"
-                  style={{borderColor: "#FFCCBC"}}
+                  className="flex flex-col bg-white md:flex-row gap-2 md:gap-0 border border-[#FFCCBC] py-4 my-4 justify-around items-center shadow rounded-lg"
                 >
                   <img src={product?.image} alt={product?.title} className="w-30 h-30 object-contain" />
                   <p>商品id: {item.productId}</p>
                   <p className="md:w-1/3">商品名稱: {product?.title || "loading..."}</p>
 
                   <div 
-                    className="flex gap-1 border p-1 items-center" 
-                    style={{borderColor: "#FFCCBC"}}
+                    className="flex gap-1 border border-[#FFCCBC] p-1 items-center" 
                   >
                     <button 
                       onClick={() => removeFromCart(item.productId)} 
-                      className="border p-2 md:p-1 rounded transition-colors"
-                      style={{borderColor: "#FFCCBC"}}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = "#FFF1EB"}
-                      onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                      className="border border-[#FFCCBC] p-2 md:p-1 rounded transition-colors bg-transparent hover:bg-[#FFF1EB]"
                       type="button"
                     >
                       <TbShoppingBagMinus />
@@ -76,16 +71,13 @@ function Cart() {
                     <span>目前數量: {item.num}</span>
                     <button 
                       onClick={() => addToCart(item.productId)} 
-                      className="border p-3 md:p-1 rounded transition-colors"
-                      style={{borderColor: "#FFCCBC"}}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = "#FFF1EB"}
-                      onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                      className="bg-transparent hover:bg-[#FFF1EB] border border-[#FFCCBC] p-3 md:p-1 rounded transition-colors"
                       type="button"
                     >
                       <TbShoppingBagPlus /> 
                     </button>
                   </div>
-                  <p className="text-orange-500 md:w-1/7 text-center" style={{color: "#FF8360"}}>價錢: {product?.price}</p>
+                  <p className="text-orange-500 md:w-1/7 text-[#FF8360] text-center">價錢: {product?.price}</p>
                 </div>
                 )
               })
@@ -95,43 +87,28 @@ function Cart() {
           <div className="flex flex-wrap gap-4 mt-6 justify-center">
             <button 
               onClick={resetCart} 
-              className="border px-4 py-2 rounded transition-colors"
-              style={{borderColor: "#FFCCBC"}}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = "#FFF1EB"}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+              className="border border-[#FFCCBC] bg-transparent hover:bg-[#FFF1EB] px-4 py-2 rounded transition-colors"
               type="button"
             >
               重製購物車
             </button>
             <button 
               onClick={backToProduct} 
-              className="border px-4 py-2 rounded transition-colors"
-              style={{borderColor: "#FFCCBC"}}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = "#FFF1EB"}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+              className="border border-[#FFCCBC] bg-transparent hover:bg-[#FFF1EB] px-4 py-2 rounded transition-colors"
               type="button"
             >
               繼續購物
             </button>
             <button 
               onClick={checkout} 
-              className="border px-4 py-2 rounded transition-colors"
-              style={{borderColor: "#FFCCBC", color: "#5A3E36"}}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = "#E66F55";
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = "#5A3E36";
-              }}
+              className="text-[#5A3E36] hover:text-white bg-transparent hover:bg-[#E66F55] border border-[#FFCCBC] text-[#5A3E36] px-4 py-2 rounded transition-colors"
               type="button"
             >
               前往結帳
             </button>
           </div>
            {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-           <p className="text-xl font-bold mb-4 text-center mt-4" style={{color: "#FF8360"}}>總價: {Math.round(total)}</p>
+           <p className="text-[#FF8360] text-xl font-bold mb-4 text-center mt-4">總價: {Math.round(total)}</p>
         </div>
     )
 }

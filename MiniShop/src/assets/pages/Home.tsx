@@ -47,10 +47,7 @@ function Home() {
         ) : (
           <button
             onClick={() => navigate("/login")}
-            className="px-5 py-2 text-white rounded-lg shadow transition duration-200 cursor-pointer"
-            style={{ backgroundColor: "#FF8360" }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E66F55")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#FF8360")}
+            className="bg-[#FF8360] hover:bg-[#E66F55] px-5 py-2 text-white rounded-lg shadow transition duration-200 cursor-pointer"
           >
             登入
           </button>

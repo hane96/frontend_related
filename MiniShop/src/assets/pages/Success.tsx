@@ -6,22 +6,14 @@ function Success() {
 
     return (
         <div 
-          className="h-screen p-10 flex flex-col items-center justify-center text-center"
-          style={{ backgroundColor: "#FFF7F0", color: "#5A3E36" }}
+          className="h-screen p-10 flex flex-col items-center justify-center text-center bg-[#FFF7F0] text-[#5A3E36]"
         >
-            <p className="text-2xl font-bold mt-10 mb-5" style={{ color: "#FF8360" }}>
+            <p className="text-2xl font-bold mt-10 mb-5 text-[#FF8360]">
               感謝購買
             </p>
             <button 
               onClick={() => navigate("/product")} 
-              className="border px-4 py-2 rounded transition-colors"
-              style={{ 
-                borderColor: "#FFCCBC", 
-                backgroundColor: "#FF8360", 
-                color: "white"
-              }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = "#E66F55"}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = "#FF8360"}
+              className="border border-[#FFCCBC] px-4 py-2 rounded transition-colors bg-[#FF8360] text-white hover:bg-[#E66F55]"
               type="button"
             >
                 繼續購物
@@ -31,3 +23,4 @@ function Success() {
 }
 
 export default Success;
+

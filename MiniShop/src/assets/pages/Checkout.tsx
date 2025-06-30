@@ -68,10 +68,10 @@ function Checkout() {
     };
 
     return (
-        <div className="pt-10 h-screen" style={{backgroundColor: "#FFF7F0"}}>
-          <div className="flex flex-col bg-white mt-10 p-4 border mx-6 md:mx-30 rounded shadow" style={{color: "#5A3E36"}}>
+        <div className="bg-[#FFF7F0] pt-10 h-screen">
+          <div className="flex flex-col bg-white mt-10 p-4 border mx-6 md:mx-30 rounded shadow text-[#5A3E36]">
             
-            <h1 className="mt-2 mb-4 font-bold pl-2 md:text-xl" style={{color: "#FF8360"}}>帳單資訊</h1>
+            <h1 className="mt-2 mb-4 font-bold pl-2 md:text-xl text-[#FF8360]">帳單資訊</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
                 <input 
@@ -79,8 +79,7 @@ function Checkout() {
                   placeholder="姓名" 
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full border p-2 rounded"
-                  style={{borderColor: "#FFCCBC"}}
+                  className="w-full border border-[#FFCCBC] p-2 rounded"
                 />
                 {nameError && <p className="text-red-500 text-sm mt-1">{nameError}</p>}
 
@@ -89,8 +88,7 @@ function Checkout() {
                   placeholder="電話" 
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border p-2 rounded"
-                  style={{borderColor: "#FFCCBC"}}
+                  className="w-full border border-[#FFCCBC] p-2 rounded"
                 />
                 {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
 
@@ -99,37 +97,24 @@ function Checkout() {
                   placeholder="地址" 
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full border p-2 rounded"
-                  style={{borderColor: "#FFCCBC"}}
+                  className="w-full border border-[#FFCCBC] p-2 rounded"
                 />
                 {addressError && <p className="text-red-500 text-sm mt-1">{addressError}</p>}
 
                 <button 
                   type="submit"
-                  className="border px-4 py-3 md:px-2 rounded mx-auto transition-colors"
-                  style={{borderColor: "#FFCCBC"}}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor = "#E66F55";
-                    e.currentTarget.style.color = "white";
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = "#5A3E36";
-                  }}
+                  className="border border-[#FFCCBC] px-4 py-3 md:px-2 rounded mx-auto transition-colors text-[#5A3E36] hover:bg-[#E66F55] hover:text-white"
                 >
                     提交
                 </button>
             </form>
 
-            <p className="text-xl font-bold mb-4" style={{color: "#FF8360"}}>付款金額: {Math.round(total)}</p>
+            <p className="text-xl font-bold mb-4 text-[#FF8360]">付款金額: {Math.round(total)}</p>
             
             <div className="flex flex-row justify-center gap-x-4">
               <button 
                 onClick={() => navigate("/cart")} 
-                className="border p-2 rounded transition-colors"
-                style={{borderColor: "#FFCCBC"}}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = "#FFF1EB"}
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                className="border border-[#FFCCBC] p-2 rounded transition-colors hover:bg-[#FFF1EB]"
                 type="button"
               >
                 返回購物車
@@ -137,16 +122,7 @@ function Checkout() {
 
               <button 
                 onClick={() => pay()} 
-                className="border p-2 rounded transition-colors"
-                style={{borderColor: "#FFCCBC"}}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = "#E66F55";
-                  e.currentTarget.style.color = "white";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "#5A3E36";
-                }}
+                className="border border-[#FFCCBC] p-2 rounded transition-colors text-[#5A3E36] hover:bg-[#E66F55] hover:text-white"
                 type="button"
               >
                 確認購買
@@ -159,6 +135,7 @@ function Checkout() {
 }
 
 export default Checkout;
+
 
 
 

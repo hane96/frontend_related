@@ -35,7 +35,8 @@ function Products(){
         {
           isLogin ?
           <div className="bg-[#FFEDE5] flex justify-between items-center pl-5 shadow text-sm" >
-            <span className="text-[#FF8360] font-semibold text-lg">MiniShop</span>
+            <span className="text-[#FF8360] font-semibold text-lg cursor-pointer"
+              onClick={()=>{navigate("/")}}>MiniShop</span>
             <div className="flex px-4 py-2 space-x-2 items-center">
               <span className="text-[#7F5A4F]">歡迎: {localStorage.getItem("username")}</span>
               <button
