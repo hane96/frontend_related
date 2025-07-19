@@ -8,14 +8,8 @@ function Notfound() {
   };
 
   return (
-    <div
-      className="flex flex-col justify-center text-center gap-4 h-screen bg-[#FFF7F0] text-[#5A3E36]"
-    >
-      <h1
-        className="font-bold text-2xl text-[#FF8360]"
-      >
-        404 Not Found
-      </h1>
+    <div className="flex flex-col justify-center text-center gap-4 h-screen bg-[#FFF7F0] text-[#5A3E36]">
+      <h1 className="font-bold text-2xl text-[#FF8360]">404 Not Found</h1>
       <h2 className="text-[#7F5A4F]">請檢查route是否正確</h2>
       <button
         onClick={() => handleClick()}
@@ -28,4 +22,3 @@ function Notfound() {
 }
 
 export default Notfound;
-

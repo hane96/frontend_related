@@ -27,9 +27,7 @@ function Login() {
   };
 
   return (
-    <div
-      className="flex flex-col items-center h-screen bg-[#FFF7F0] text-[#5A3E36]"
-    >
+    <div className="flex flex-col items-center h-screen bg-[#FFF7F0] text-[#5A3E36]">
       <div className="flex flex-col items-center py-6 gap-4 justify-center rounded">
         <h2 className="text-2xl font-bold text-center text-[#FF8360]">
           登入會員
@@ -58,9 +56,7 @@ function Login() {
         </form>
 
         {error && (
-          <p className="text-sm mt-4 text-center text-[#E66F55]">
-            {error}
-          </p>
+          <p className="text-sm mt-4 text-center text-[#E66F55]">{error}</p>
         )}
       </div>
 
@@ -79,13 +75,10 @@ function Login() {
         </button>
       </div>
 
-      <p className="mt-2 text-[#7F5A4F]">
-        測試用帳號: user
-      </p>
+      <p className="mt-2 text-[#7F5A4F]">測試用帳號: user</p>
       <p className="text-[#7F5A4F]">測試用密碼: user123</p>
     </div>
   );
 }
 
 export default Login;
-
