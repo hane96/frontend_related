@@ -494,5 +494,239 @@ store.dispatch(orderCoffee());
 store.dispatch(orderCoffeeObj);
 store.dispatch(orderCoffeeByNum(2));
 
+unsubsribe();
+```
+
+這裡的`subscribe()`可以注意一下，寫這一行時就已經訂閱好了(註冊了一個監聽 state 的 listener )，每當 state 改變都會觸發裡面的 callback function。
+
+他會回傳一個`unsubscribe`的 function ，可以把他理解成是一個寫好的 cleanup function，執行 `unsubscribe()`以後會把這個 listener 清掉
+
+---
+
+## 檔案分離
+
+最基本會照 `store`, `action`, `reducer` 去分離檔案
+
+這邊使用 `module.exports` 和 `require` 來做，這是 `Node.js` 原生的模組系統 ( `CommonJS` ) 的檔案分離語法。 `import`、`export`是 ES6+ 以後才有的東西
+
+### action
+
+這邊做一個 `action` 資料夾，裡面會包括 `action creator` (這裡的 order ) 和 `types`(定義 type 變數)
+
+把 action 的部分放到 `types.js` 中
+
+```js
+// types.js
+const orderCoffee = () => {
+  return {
+    type: "COFFEE_ORDERED",
+    payload: 1,
+  };
+};
+
+const orderCoffeeObj = {
+  type: "COFFEE_ORDERED",
+  payload: 1,
+};
+
+const orderCoffeeByNum = (num) => {
+  return {
+    type: "COFFEE_ORDERED",
+    payload: num,
+  };
+};
+
+module.exports = {
+  orderCoffee,
+  orderCoffeeByNum,
+  orderCoffeeObj,
+};
+```
+
+- `module.exports` 會傳遞一個物件出去，這個物件可以包含 function、object 等，其他人可以用 `require('檔案路徑')`拿到這個物件，由此達到不同檔案溝通的效果
+- 一個檔案只能有一個 `module.exports`
+
+`index.js` 加上這一行拿到檔案傳來的物件
+
+```js
+const {
+  orderCoffee,
+  orderCoffeeByNum,
+  orderCoffeeObj,
+} = require("./action/order");
+```
+
+### 命名/分離 type
+
+前面的 `action object` 中我們都是直接用字串寫，在中大型專案中常會刻意用一個變數來表示 `action type` ，且這些 type 會獨立為一個檔案來存
+
+```js
+// /action/type
+const COFFEE_ORDERED = "COFFEE_ORDERED";
+const COFFEEBEAN_ORDERED = "COFFEEBEAN_ORDERED";
+const CAKE_ORDERED = "CAKE_ORDERED";
+
+module.exports = {
+  COFFEE_ORDERED,
+  COFFEEBEAN_ORDERED,
+  CAKE_ORDERED,
+};
+```
+
+更改原本的 `order.js`:
+
+```js
+// /action/order
+const { COFFEE_ORDERED } = require("./types/types");
+
+const orderCoffee = () => {
+  return {
+    type: COFFEE_ORDERED,
+    payload: 1,
+  };
+};
+
+const orderCoffeeObj = {
+  type: COFFEE_ORDERED,
+  payload: 1,
+};
+
+const orderCoffeeByNum = (num) => {
+  return {
+    type: COFFEE_ORDERED,
+    payload: num,
+  };
+};
+```
+
+將 `action type` 用變數來存有很多好處:
+
+- 避免打錯字 (原本的字串拼錯 redux 不會報錯) 方便 debug
+- 集中管理所有 `action type`
+- 方便重構 (當要改變 `action.type` 名稱時只要從 `type.js` 改就好
+
+### Reducer / combineReducers
+
+一個專案中通常會有很多個 reducer，所以會需要用 redux 內建的 `combineReducers` 把多個 reducer 結合起來
+
+會建立一個 reducer 資料夾放所有的 reducer 和最後結合出來的 combineReducers
+
+- `orderReducer.js`
+
+```js
+// reducer/orderReducer
+const { COFFEE_ORDERED } = require("../action/types");
+
+const initialState = {
+  numOfCoffee: 20,
+  numOfCoffeeBean: 20,
+  numOfCake: 20,
+};
+
+const orderReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case COFFEE_ORDERED:
+      return {
+        ...state,
+        numOfCoffee: state.numOfCoffee - action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+module.exports = { orderReducer };
+```
+
+會開一個 `index.js` 用來存 combineReducers 的結果
+
+- `index.js`
+
+```js
+// reducer/index
+const { combineReducers } = require("redux");
+
+const { orderReducer } = require("./orderReducer");
+
+const reducers = combineReducers({
+  orderReducer,
+});
+
+module.exports = {
+  reducers,
+};
+```
+
+先從 redux 拿出 `combineReducers` ，再把要放進來的 reducer 用物件的形式放到 combineReducers 裡面
+
+### store
+
+`store` 資料夾底下通常只會有 index.js
+
+```js
+// /store/index
+const { createStore } = require("redux");
+
+const { reducers } = require("../reducer");
+
+const store = createStore(reducers);
+
+module.exports = {
+  store,
+};
+```
+
+接收 `combineReducers` 結合出來的 reducers，放進 `createStore` 裡面建立 `store`
+
+### index.js
+
+原本的 `index.js` ，引入 `store`、`action creator`，就可以用 `dispatch(action object)` 和 `getState()` 來操作
+
+```js
+const {
+  orderCoffee,
+  orderCoffeeByNum,
+  orderCoffeeObj,
+} = require("./action/order");
+
+const { store } = require("./store");
+
+console.log("initial state", store.getState());
+
+const unsubscribe = store.subscribe(() =>
+  console.log("更新", store.getState())
+);
+
+store.dispatch(orderCoffee());
+store.dispatch(orderCoffeeObj);
+store.dispatch(orderCoffeeByNum(2));
+
 unsubscribe();
 ```
+
+執行的結果:
+
+```
+initial state {
+  orderReducer: { numOfCoffee: 20, numOfCoffeeBean: 20, numOfCake: 20 }
+}
+更新 {
+  orderReducer: { numOfCoffee: 19, numOfCoffeeBean: 20, numOfCake: 20 }
+}
+更新 {
+  orderReducer: { numOfCoffee: 18, numOfCoffeeBean: 20, numOfCake: 20 }
+}
+更新 {
+  orderReducer: { numOfCoffee: 16, numOfCoffeeBean: 20, numOfCake: 20 }
+}
+```
+
+可以看到 state 裡面多了 key 表示是哪一個 reducer 來的 state
+
+#### 結論
+
+- 檔案分為三個資料夾: `store`、`action`、`reducer`
+- `action` 通常包含多個 `action creator` 的檔案和 `types`(定義 action.type 的變數)
+- `reducer` 通常包含多個 `reducer` 檔案和 `index.js` 把這些 reducer 結合起來
+- `store` 通常只有一個 `index.js`，接收 reducer 裡 `index.js` 那個結合完成的 `reducers` ，拿來建立一個 store
+- 專案最外層的 `index.js` 拿取 `store` 和 `action creator` 拿來操作
