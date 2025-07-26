@@ -723,6 +723,8 @@ initial state {
 
 可以看到 state 裡面多了 key 表示是哪一個 reducer 來的 state
 
+(可以試著把咖啡豆和蛋糕的邏輯寫出來當練習)
+
 #### 結論
 
 - 檔案分為三個資料夾: `store`、`action`、`reducer`
@@ -730,3 +732,310 @@ initial state {
 - `reducer` 通常包含多個 `reducer` 檔案和 `index.js` 把這些 reducer 結合起來
 - `store` 通常只有一個 `index.js`，接收 reducer 裡 `index.js` 那個結合完成的 `reducers` ，拿來建立一個 store
 - 專案最外層的 `index.js` 拿取 `store` 和 `action creator` 拿來操作
+
+---
+
+### Reducer 拆分
+
+我們再前面的狀態裡面新增一個 assets 代表店的資產，並把購買和販賣的邏輯做出來:
+
+```js
+// /reducer/orderReducer.js
+const {
+  COFFEE_ORDERED,
+  COFFEE_RESTOCKED,
+  COFFEEBEAN_ORDERED,
+  COFFEEBEAN_RESTOCKED,
+  CAKE_ORDERED,
+  CAKE_RESTOCKED,
+} = require("../action/types");
+
+const initialState = {
+  numOfCoffee: 20,
+  numOfCoffeeBean: 20,
+  numOfCake: 20,
+  assets: 1000,
+};
+
+const orderReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case COFFEE_ORDERED:
+      return {
+        ...state,
+        numOfCoffee: state.numOfCoffee - action.payload.qty,
+        assets: state.assets + action.payload.income,
+      };
+    case COFFEE_RESTOCKED:
+      return {
+        ...state,
+        numOfCoffee: state.numOfCoffee + action.payload.qty,
+        assets: state.assets - action.payload.pay,
+      };
+    case COFFEEBEAN_ORDERED:
+      return {
+        ...state,
+        numOfCoffeeBean: state.numOfCoffeeBean - action.payload.qty,
+        assets: state.assets + action.payload.income,
+      };
+    case COFFEEBEAN_RESTOCKED:
+      return {
+        ...state,
+        numOfCoffeeBean: state.numOfCoffeeBean + action.payload.qty,
+        assets: state.assets - action.payload.pay,
+      };
+    case CAKE_ORDERED:
+      return {
+        ...state,
+        numOfCake: state.numOfCake - action.payload.qty,
+        assets: state.assets + action.payload.income,
+      };
+    case CAKE_RESTOCKED:
+      return {
+        ...state,
+        numOfCake: state.numOfCake + action.payload.qty,
+        assets: state.assets - action.payload.pay,
+      };
+    default:
+      return state;
+  }
+};
+
+module.exports = { orderReducer };
+```
+
+可以看到 reducer 變得很複雜，所以實務上通常會把 reducer 拆成很多個再用 `combineReducers` 結合起來
+
+- 這邊先將 reducer 按照商品做拆分
+
+```js
+// /reducer/coffeeReducer.js
+const { COFFEE_ORDERED, COFFEE_RESTOCKED } = require("../action/types");
+
+const initialState = {
+  numOfCoffee: 20,
+};
+
+const coffeeReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case COFFEE_ORDERED:
+      return {
+        ...state,
+        numOfCoffee: state.numOfCoffee - action.payload.qty,
+      };
+    case COFFEE_RESTOCKED:
+      return {
+        ...state,
+        numOfCoffee: state.numOfCoffee + action.payload.qty,
+      };
+    default:
+      return state;
+  }
+};
+
+module.exports = { coffeeReducer };
+```
+
+- 同理也可以拆出 `coffeeBeanReducer` 和 `cakeReducer`
+- 拆 reducer 時 initail state 也會被拆開來，state 管理的東西需要不被這個 reducer 以外的其他 reducer 影響
+
+可以注意到這邊少了 `assets` 的部分，是因為大家用的是同一個 `assets`，如果分散寫在不同 reducer 的 state 裡面會有同步問題，因此將 `assets` 獨立為一個 reducer 來管理
+
+```js
+// /reducer/assetsReducer.js
+const {
+  COFFEE_ORDERED,
+  COFFEE_RESTOCKED,
+  COFFEEBEAN_ORDERED,
+  COFFEEBEAN_RESTOCKED,
+  CAKE_ORDERED,
+  CAKE_RESTOCKED,
+} = require("../action/types");
+
+const initailState = {
+  assets: 1000,
+};
+
+const assetsReducer = (state = initailState, action) => {
+  switch (action.type) {
+    case COFFEE_ORDERED:
+      return {
+        ...state,
+        assets: state.assets + action.payload.income,
+      };
+    case COFFEE_RESTOCKED:
+      return {
+        ...state,
+        assets: state.assets - action.payload.pay,
+      };
+    case COFFEEBEAN_ORDERED:
+      return {
+        ...state,
+        assets: state.assets + action.payload.income,
+      };
+    case COFFEEBEAN_RESTOCKED:
+      return {
+        ...state,
+        assets: state.assets - action.payload.pay,
+      };
+    case CAKE_ORDERED:
+      return {
+        ...state,
+        assets: state.assets + action.payload.income,
+      };
+    case CAKE_RESTOCKED:
+      return {
+        ...state,
+        assets: state.assets - action.payload.pay,
+      };
+    default:
+      return state;
+  }
+};
+
+module.exports = { assetsReducer };
+```
+
+- 在 `index.js` 做結合:
+
+```js
+// /reducer/index.js
+const { combineReducers } = require("redux");
+const { coffeeReducer } = require("./coffeeReducer");
+const { coffeeBeanReducer } = require("./coffeeBeanReducer");
+const { cakeReducer } = require("./cakeReducer");
+const { assetsReducer } = require("./assetsReducer");
+
+const reducers = combineReducers({
+  coffee: coffeeReducer,
+  coffeeBean: coffeeBeanReducer,
+  cake: cakeReducer,
+  money: assetsReducer,
+});
+
+module.exports = {
+  reducers,
+};
+```
+
+- `combineReducers` 內的這些 `coffee:` 是 key。 `getState()` 的結果會長這樣:
+
+```
+{
+  coffee: { numOfCoffee: 20 },
+  coffeeBean: { numOfCoffeeBean: 20 },
+  cake: { numOfCake: 20 },
+  money: { assets: 1000 }
+}
+```
+
+- `getState()` 後面加`.key名稱` 可以得到指定 reducer 的 state:
+
+```js
+console.log(store.getState().coffee);
+```
+
+輸出:
+
+```
+{ numOfCoffee: 20 }
+```
+
+如果真的想要讓 `assets` 分散在不同 reducer 中，我們就需要 `Redux-middleware` 來做到不同 reducer 之間的溝通。
+
+---
+
+## Redux-thunk / middleware
+
+`Redux-thunk` 是其中一種 redux-middleware
+
+安裝套件:
+
+```bash
+npm install redux-thunk
+```
+
+### Redux middleware
+
+一個框架的 middleware 通常是指可以在某個階段的執行期間插入一段自定義的程式。
+
+而 Redux 的 middleware 是夾在 `dispatch action` 和 `到達reducer` 之間的中間層，可以攔截、修改、延遲或觸發額外的邏輯
+
+- Redux 中的 data stream:
+
+```js
+dispatch(action) --> middleware --> reducer --> update state
+```
+
+middleware 可以想成是 Redux 的中繼站，可以做:
+
+- 非同步處理 (發 API )
+- log 紀錄 (loggeer)
+- 條件判斷 (ex: 檢查 aseets 夠才可以下單)
+- 派發其他 action
+
+可以注意到上面這些和 **與其他 reducer 溝通** 都是 side effect
+
+但前面有提到 reducer 要是 **pure function** 。
+
+- Reducer 是 pure function 的好處
+
+1. 可預測性高: 只看 action 和舊的 state 就知道新的 state 是什麼
+2. 可以 time travel : 可以用 DevTools 回放所有 state 的過程，中間如果有 console.log 或 非同步邏輯會擾亂這個流程
+3. 更容易測試: 可以把 reducer 當作 pure function 測試，(丟 action)
+
+**Redux middleware 的特性:**
+
+- middleware 的執行時機由框架決定，我們可以決定的只有 middleware 要執行的內容，無法指定時機點
+- Redux 的 middleware 執行時機在 `dispatch action` 到 `action 傳到 reducer` 之間的這段時間
+- 可以定義多個 middleware ，我們可以按照順序調用 middleware ，每次 dispatch 都會把所有 middleware 走過一遍
+
+#### 單用 redux-thunk 作為唯一的 middleware
+
+```js
+import { createStore, applyMiddleware } from "redux";
+
+import { reducers } from "../reducer.js";
+
+import { thunk } from "redux-thunk";
+
+const store = createStore(reducers, applyMiddleware(thunk));
+
+export { store };
+```
+
+( 這邊原本使用 `require(redux-thunk)` 的方式寫會出錯，所以改用 ES module 的方式去寫 )
+
+我們看多出的部分:
+
+1. `import {thunk} from "redux-thunk";`
+
+```js
+import { thunk } from "redux-thunk";
+```
+
+將 middleware ( `thunk` ) 拿出來
+
+2. `applyMiddleware(thunk)`
+
+把剛才載入的 middleware 裝進 redux store 中，告訴 Redux: 每次 dispatch action 都要先經過這個 middleware 再進入 reducer
+
+3. `createStore(reducers, applyMiddleware(thunk))`
+
+`createStore` 多傳遞一個 `applyMiddleware(thunk)` 可以將 middleware 串進來
+
+這個 store 有定義好的 reducers 並且在每次 dispatch() 都會先經過 middleware (這裡是 thunk )
+
+**結論:**
+
+- `redux-thunk` 裝進 store 以後可以想成是在 `dispatch action` 和 `進入reducer` 之間裝了一個 middleware 的過濾器
+- middleware 會攔截 function，所以當 `dispatch(function)` 時 middleware 就會處理這個 function，而 `dispatch(action object)` 則會通過後進入 reducer
+- 這個 function 被攔截以後理論上不會再往下去 reducer，除非我的 function 裡面還有 dispatch
+- function 內部的 dispatch 可以是 `dispatch(action object)` 讓他進入 reducer，也可以繼續 `dispatch(function2)` 做巢狀 function
+
+如果要做多層 middleware:
+
+```js
+applyMiddleware(middleware1, middleware2, ...)
+```
+
+---
