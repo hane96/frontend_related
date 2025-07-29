@@ -222,7 +222,7 @@ RTK 的特色:
 npm install @reduxjs/toolkit react-redux
 ```
 
-下面會以 `RTK` 為主，補充原版 Redux 內容的方式進行
+`RTK` 中包括原版的 redux
 
 ### `Actions`
 
@@ -330,6 +330,8 @@ console.log(currentValue);
 ---
 
 ## 範例
+
+這邊開始會先以原版 Redux 來做
 
 在開始 redux 專案之前先講情境，假設要做的是一個店家的庫存管理，會有店本身(老闆)、店員、客戶。
 
@@ -1037,5 +1039,127 @@ import { thunk } from "redux-thunk";
 ```js
 applyMiddleware(middleware1, middleware2, ...)
 ```
+
+#### 範例:
+
+`Redux-thunk` 處理 fetch API 的範例，和平時 React 專案中一樣我們維護三個 state (data, loading, error)。
+
+基本上做法就是給這三個動作各一個 action type，並用同一個 reducer 處理他們。 reducer 內的 state 也是包含這三個東西
+
+- `action.js`
+
+```js
+const FETCH_USERS_REQUEST = "FETCH_USERS_REQUEST";
+const FETCH_USERS_SUCCESS = "FETCH_USERS_SUCCESS";
+const FETCH_USERS_FAILURE = "FETCH_USERS_FAILURE";
+
+const fetchUsersRequest = () => ({ type: FETCH_USERS_REQUEST });
+const fetchUsersSuccess = (users) => ({
+  type: FETCH_USERS_SUCCESS,
+  payload: users,
+});
+const fetchUsersFailure = (error) => ({
+  type: FETCH_USERS_FAILURE,
+  payload: error,
+});
+
+const fetchUsers = () => {
+  return async (dispatch) => {
+    dispatch(fetchUsersRequest());
+    try {
+      const res = await fetch("https://jsonplaceholder.typicode.com/users/1");
+      const data = await res.json();
+      dispatch(fetchUsersSuccess(data));
+    } catch (err) {
+      dispatch(fetchUsersFailure(err.message));
+    }
+  };
+};
+
+export {
+  FETCH_USERS_REQUEST,
+  FETCH_USERS_SUCCESS,
+  FETCH_USERS_FAILURE,
+  fetchUsers,
+};
+```
+
+fetch 的寫法基本上和平常在 React 專案裡做 GET request 差不多，只是過程當中的那些 `setState` 變成使用 `dispatch(action)` 去做。
+
+程式邏輯本質上都是一樣的，只是加了一套狀態管理的方式
+
+- `reducer.js`
+
+```js
+import {
+  FETCH_USERS_REQUEST,
+  FETCH_USERS_SUCCESS,
+  FETCH_USERS_FAILURE,
+} from "./action.js";
+
+const initialState = {
+  loading: false,
+  users: [],
+  error: "",
+};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_USERS_REQUEST:
+      return { ...state, loading: true };
+    case FETCH_USERS_SUCCESS:
+      return { loading: false, user: action.payload, error: "" };
+    case FETCH_USERS_FAILURE:
+      return { loading: false, user: [], error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export { reducer };
+```
+
+每種 action.type 對應要處理的 reducer ， 每個 action.type 可以獨立決定下一個 state 的結果
+
+- `store.js`
+
+```js
+import { createStore, applyMiddleware } from "redux";
+import { thunk } from "redux-thunk";
+import { reducer } from "./reducer.js";
+
+const store = createStore(reducer, applyMiddleware(thunk));
+
+export { store };
+```
+
+建立 store ( 輸入 reducer 並裝上 middleware )
+
+使用的例子 :
+
+- `index.js`
+
+```js
+import { store } from "./store.js";
+import { fetchUsers } from "./action.js";
+
+const unsubscribe = store.subscribe(() => {
+  console.log("state updated:", store.getState());
+});
+
+store.dispatch(fetchUsers());
+```
+
+一次 `fetchUsers()` 會造成兩次 state 的改變 ( 第一次先改 loading，第二次改 API 傳來的 data )，所以會觸發`console.log` 兩次。
+
+因為 `fetch` 非同步，所以假設我在最下面加上 `unsubscribe();` 就只會輸出一次 loading 變化的 state，等 fetch 完就已經 unsubscribe 了不會輸出 。
+
+- 整個範例中用到 `redux-thunk` 的只有這一行
+
+```js
+store.dispatch(fetchUsers());
+```
+
+`redux-thunk` 讓我們可以 `dispatch(function)`
 
 ---
